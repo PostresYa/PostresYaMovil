@@ -3,9 +3,12 @@ package com.example.duvan.postresya;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -49,7 +52,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
+    private android.content.Context contextLogin=this;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -371,7 +374,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(String success) {
             mAuthTask = null;
             showProgress(false);
-            mEmailView.setText(success);
+            if(success!=null) {
+                Intent i= new Intent(contextLogin,VerReposterias.class);
+                i.putExtra("user",mEmail);
+                i.putExtra("password",mPassword);
+                startActivity(i);
+
+            }else{
+                AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextLogin);
+                alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alertDialog= alertBuilder.create();
+                alertDialog.setTitle("Incorrecto");
+                alertDialog.setMessage("los datos de usuario y password no son correctos");
+                alertDialog.show();
+            }
+
+
             /*
             if (success!=null) {
                 finish();
