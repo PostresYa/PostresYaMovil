@@ -1,11 +1,17 @@
 package com.example.duvan.postresya;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -16,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -35,11 +42,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class VerReposterias extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,LocationListener {
 
 
     private android.content.Context contextReposterias=this;
-
+    private double latitud;
+    private double longitud;
+    private boolean finding=false;
 
 
     @Override
@@ -67,9 +76,13 @@ public class VerReposterias extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        LocationManager locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,1,0,this);
 
         AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -124,7 +137,37 @@ public class VerReposterias extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        latitud= location.getLatitude();
+        longitud= location.getLongitude();
+        finding=true;
+    }
 
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextReposterias);
+        alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        AlertDialog alertDialog= alertBuilder.create();
+        alertDialog.setTitle("GPS");
+        alertDialog.setMessage("por favor active el gps del dispositivo");
+        alertDialog.show();
+    }
 
 
     private class MyTaskGetReposterias extends AsyncTask<String,Integer,JSONArray> {
@@ -135,6 +178,9 @@ public class VerReposterias extends AppCompatActivity
             try {
 
 
+                while(!finding){
+
+                }
                  Intent i=getIntent();
                 cual=strings[0];
 
@@ -189,6 +235,7 @@ public class VerReposterias extends AppCompatActivity
                 //  h.setText(jsonArray.toString());
                 try {
                     if(cual.equals("reposterias")){
+                        h.setText(latitud+"  sdfd "+longitud);
                         addData(jsonArray);
                     }else{
                         addDataPostres(jsonArray);
@@ -247,7 +294,7 @@ public class VerReposterias extends AppCompatActivity
                 Toolbar.LayoutParams.WRAP_CONTENT));
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject product = (JSONObject) jsonArray.get(i);
+            final JSONObject product = (JSONObject) jsonArray.get(i);
             TableRow tr = new TableRow(contextReposterias);
             //  if (i % 2 != 0) {
             //     tr.setBackgroundColor(Color.BLACK);
@@ -289,11 +336,19 @@ public class VerReposterias extends AppCompatActivity
             id.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TextView h = (TextView) findViewById(R.id.prueba);
-                    TextView ms= (TextView) findViewById(view.getId());
+                   // TextView h = (TextView) findViewById(R.id.prueba);
+                    /*TextView ms= (TextView) findViewById(view.getId());
 
-                    h.setText(view.getId()+"");
-                    AsyncTask tareaPostres= new MyTaskGetReposterias().execute(ms.getText()+"");
+                    try {
+                        h.setText(product.getString("nit"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+                    try {
+                        AsyncTask tareaPostres= new MyTaskGetReposterias().execute(product.getString("nit"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             });
