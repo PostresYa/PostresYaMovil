@@ -308,7 +308,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    public class UserLoginTask extends AsyncTask<Void, Void, JSONObject> {
 
         private final String mEmail;
         private final String mPassword;
@@ -319,7 +319,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected JSONObject doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
             /*try {
@@ -337,12 +337,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }*/
             String reqResponse=null;
+            JSONObject userActual = null;
 
             try {
 
                 String userPass = mEmail+":"+mPassword;
                 String basicAuth = "Basic "+ new String(Base64.encodeToString(userPass.getBytes(),Base64.NO_WRAP));
-                URL obj = new URL("https://projectpostresya.herokuapp.com/cliente/check");
+                URL obj = new URL("https://projectpostresya.herokuapp.com/app/user");
                 HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type","application/json");
@@ -358,27 +359,52 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 in.close();
                 reqResponse = ((HttpsURLConnection)con).getResponseMessage();
 
-
+            userActual=new JSONObject(response.toString());
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             // TODO: register the new account here.
-            return reqResponse;
+            return userActual;
         }
 
         @Override
-        protected void onPostExecute(String success) {
+        protected void onPostExecute(JSONObject success) {
             mAuthTask = null;
             showProgress(false);
             if(success!=null) {
-                Intent i= new Intent(contextLogin,VerReposterias.class);
-                i.putExtra("user",mEmail);
-                i.putExtra("password",mPassword);
-                startActivity(i);
+
+
+                try {
+                    if(success.getJSONArray("authorities").getJSONObject(0).getString("authority").equals("cliente")){
+                        SingletonUser.getInstance().setUser(mEmail);
+                        SingletonUser.getInstance().setPassword(mPassword);
+                        Intent i= new Intent(contextLogin,VerReposterias.class);
+
+                        startActivity(i);
+                    }else {
+                        AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextLogin);
+                        alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        AlertDialog alertDialog= alertBuilder.create();
+                        alertDialog.setTitle("Incorrecto");
+                        alertDialog.setMessage("los datos de usuario y password no son correctos");
+                        alertDialog.show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
 
             }else{
                 AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextLogin);

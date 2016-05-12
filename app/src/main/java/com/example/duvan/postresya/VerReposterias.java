@@ -37,6 +37,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -79,15 +83,12 @@ public class VerReposterias extends AppCompatActivity
         LocationManager locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,1,0,this);
 
-        /*PEDIENTE LABEL DEL USUARIO
-        EditText userName = (EditText) findViewById(R.id.userName);
-        Intent i = getIntent();
-        userName.setText(i.getStringExtra("user"));
-        */
+        //PEDIENTE LABEL DEL USUARIO
+
+
 
         AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
     }
-
 
 
     @Override
@@ -132,10 +133,24 @@ public class VerReposterias extends AppCompatActivity
 
             AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
         }
-        else if (id == R.id.nav_share) {
+        else if (id == R.id.ActualizarDatos) {
 
-        } else if (id == R.id.nav_send) {
+            AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextReposterias);
+            alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
+                }
+            });
+            AlertDialog alertDialog= alertBuilder.create();
+            alertDialog.setTitle("¡Lo sentimos!");
+            alertDialog.setMessage("Estamos trabajando para ello");
+            alertDialog.show();
+        }
+
+        else if (id == R.id.Logout) {
+            Intent i=new Intent(contextReposterias,LoginActivity.class);
+            startActivity(i);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -181,6 +196,7 @@ public class VerReposterias extends AppCompatActivity
         @Override
         protected JSONArray doInBackground(String... strings) {
             JSONArray products = null;
+            JSONArray respuesta=new JSONArray();
             try {
 
 
@@ -190,7 +206,7 @@ public class VerReposterias extends AppCompatActivity
                  Intent i=getIntent();
                 cual=strings[0];
 
-                String userPass = i.getStringExtra("user")+":"+i.getStringExtra("password");
+                String userPass = SingletonUser.getInstance().getUser()+":"+SingletonUser.getInstance().getPassword();
                 //String userPass = "Duvan:password";
                 String basicAuth = "Basic " + new String(Base64.encodeToString(userPass.getBytes(), Base64.NO_WRAP));
                 URL obj;
@@ -216,6 +232,31 @@ public class VerReposterias extends AppCompatActivity
                 in.close();
 
                 products = new JSONArray(response.toString());
+                JSONObject reposteriaactual;
+                Location localizacionActual=new Location("punto1");
+                localizacionActual.setLatitude(latitud);
+                localizacionActual.setLongitude(longitud);
+
+                Location localizacionReposteria=new Location("punto2");
+                double distancia;
+                if(strings[0].equals("reposterias")){
+                    for(int index=0;index<products.length();index++){
+                        reposteriaactual= (JSONObject) products.get(index);
+                        localizacionReposteria.setLatitude(reposteriaactual.getDouble("latitud"));
+                        localizacionReposteria.setLongitude(reposteriaactual.getDouble("longitud"));
+                        distancia=localizacionActual.distanceTo(localizacionReposteria);
+
+
+                        reposteriaactual.put("distancia",distancia);
+                        respuesta.put(reposteriaactual);
+                    }
+
+                    respuesta=sortArray(respuesta);
+
+                }else{
+                    respuesta=products;
+                }
+
 
 
             } catch (MalformedURLException e) {
@@ -227,12 +268,15 @@ public class VerReposterias extends AppCompatActivity
             }
 
 
-            return products;
+            return respuesta;
         }
 
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
+             TextView userName = (TextView) findViewById(R.id.userName);
+
+            userName.setText(SingletonUser.getInstance().getUser());
             TextView h = (TextView) findViewById(R.id.prueba);
 
             if (jsonArray == null) {
@@ -305,6 +349,7 @@ public class VerReposterias extends AppCompatActivity
             //  if (i % 2 != 0) {
             //     tr.setBackgroundColor(Color.BLACK);
             // } else {
+            // } else {
             tr.setBackgroundColor(Color.GRAY);
             //}
             tr.setId(100 + i);
@@ -339,7 +384,7 @@ public class VerReposterias extends AppCompatActivity
             direccion.setTextColor(Color.WHITE);
             tr.addView(direccion);
 
-            id.setOnClickListener(new View.OnClickListener() {
+            tr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                    // TextView h = (TextView) findViewById(R.id.prueba);
@@ -457,6 +502,71 @@ public class VerReposterias extends AppCompatActivity
         }
 
     }
+
+
+
+
+    private JSONArray sortArray(JSONArray jsonArr) throws JSONException {
+        JSONArray sortedJsonArray = new JSONArray();
+
+        List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+        for (int i = 0; i < jsonArr.length(); i++) {
+            jsonValues.add(jsonArr.getJSONObject(i));
+        }
+        Collections.sort(jsonValues, new Comparator<JSONObject>() {
+            //You can change "Name" with "ID" if you want to sort by ID
+            private static final String KEY_NAME = "distancia";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+
+                int resp = 0;
+
+                double valA = 0;
+                double valB = 0;
+
+                try {
+                    valA = a.getDouble(KEY_NAME);
+                    valB = b.getDouble(KEY_NAME);
+                    if (valA == valB) {
+                        resp = 0;
+
+                    } else if (valA < valB) {
+                        resp = -1;
+                    } else {
+                        resp = 1;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return resp;
+
+/*  String valA = new String();
+                String valB = new String();
+
+                try {
+                    valA = ""+a.get(KEY_NAME);
+                    valB = ""+ b.get(KEY_NAME);
+                }
+                catch (JSONException e) {
+                    //do something
+                }
+
+                return valA.compareTo(valB);
+                //if you want to change the sort order, simply use the following:
+                //return -valA.compareTo(valB);
+            }*/
+            }
+
+
+        });
+
+        for (int i = 0; i < jsonArr.length(); i++) {
+            sortedJsonArray.put(jsonValues.get(i));
+        }
+        return sortedJsonArray;
+    }
+
 
 
 }
