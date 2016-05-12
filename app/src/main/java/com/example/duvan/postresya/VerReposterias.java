@@ -79,6 +79,12 @@ public class VerReposterias extends AppCompatActivity
         LocationManager locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,1,0,this);
 
+        /*PEDIENTE LABEL DEL USUARIO
+        EditText userName = (EditText) findViewById(R.id.userName);
+        Intent i = getIntent();
+        userName.setText(i.getStringExtra("user"));
+        */
+
         AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
     }
 

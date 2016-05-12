@@ -4,6 +4,7 @@
     <group android:checkableBehavior="single">
 
         <item
+
             android:id="@+id/view_reposterias"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Reposterias" />
