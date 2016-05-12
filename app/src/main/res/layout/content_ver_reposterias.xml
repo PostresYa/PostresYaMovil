@@ -18,10 +18,20 @@
         android:text="Hello World!"
         android:id="@+id/prueba" />
 
+    <ProgressBar
+        android:id="@+id/reposterias_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView"
+        android:id="@+id/scrollViewReposterias"
         android:layout_below="@+id/prueba"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

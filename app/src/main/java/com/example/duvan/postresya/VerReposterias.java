@@ -1,5 +1,8 @@
 package com.example.duvan.postresya;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -53,7 +57,8 @@ public class VerReposterias extends AppCompatActivity
     private double latitud;
     private double longitud;
     private boolean finding=false;
-
+    private View viewReposterias;
+    private  View viewProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +84,8 @@ public class VerReposterias extends AppCompatActivity
                 alertDialog.show();
             }
         });
-
+        viewReposterias=findViewById(R.id.scrollViewReposterias);
+        viewProgress=findViewById(R.id.reposterias_progress);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -95,7 +101,7 @@ public class VerReposterias extends AppCompatActivity
         //PEDIENTE LABEL DEL USUARIO
 
 
-
+        showProgress(true);
         AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
     }
 
@@ -139,7 +145,7 @@ public class VerReposterias extends AppCompatActivity
         int id = item.getItemId();
 
         if(id==R.id.view_reposterias){
-
+            showProgress(true);
             AsyncTask tarea=new MyTaskGetReposterias().execute("reposterias");
         }
         else if (id == R.id.ActualizarDatos) {
@@ -166,6 +172,48 @@ public class VerReposterias extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            viewReposterias.setVisibility(show ? View.GONE : View.VISIBLE);
+            viewReposterias.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    viewReposterias.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+            viewProgress.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+            viewProgress.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -283,6 +331,7 @@ public class VerReposterias extends AppCompatActivity
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
+            showProgress(false);
              TextView userName = (TextView) findViewById(R.id.userName);
 
             userName.setText(SingletonUser.getInstance().getUser());
@@ -405,6 +454,7 @@ public class VerReposterias extends AppCompatActivity
                         e.printStackTrace();
                     }*/
                     try {
+                        showProgress(true);
                         AsyncTask tareaPostres= new MyTaskGetReposterias().execute(product.getString("nit"));
                     } catch (JSONException e) {
                         e.printStackTrace();
