@@ -6,16 +6,16 @@
         <item
 
             android:id="@+id/view_reposterias"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_list_black_24dp"
             android:title="Reposterias" />
 
         <item
             android:id="@+id/ActualizarDatos"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
             android:title="Actualizar datos" />
         <item
             android:id="@+id/Logout"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_input_black_24dp"
             android:title="Logout" />
         <!--item
             android:id="@+id/nav_slideshow"
