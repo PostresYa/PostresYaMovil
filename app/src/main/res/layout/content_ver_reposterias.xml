@@ -12,12 +12,6 @@
     tools:context="com.example.duvan.postresya.VerReposterias"
     tools:showIn="@layout/app_bar_ver_reposterias">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/prueba" />
-
     <ProgressBar
         android:id="@+id/reposterias_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -26,20 +20,23 @@
         android:layout_centerHorizontal="true"
 
         android:layout_marginBottom="8dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+
+
+
+        />
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollViewReposterias"
-        android:layout_below="@+id/prueba"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="76dp" >
 
         <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@+id/scrollView"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"

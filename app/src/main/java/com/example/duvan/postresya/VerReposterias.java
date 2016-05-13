@@ -6,6 +6,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -38,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +50,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import static android.widget.ImageView.*;
 
 
 public class VerReposterias extends AppCompatActivity
@@ -59,6 +64,9 @@ public class VerReposterias extends AppCompatActivity
     private boolean finding=false;
     private View viewReposterias;
     private  View viewProgress;
+
+
+    private Bitmap imagePostre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +117,8 @@ public class VerReposterias extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -311,7 +321,27 @@ public class VerReposterias extends AppCompatActivity
                     respuesta=sortArray(respuesta);
 
                 }else{
-                    respuesta=products;
+                    JSONArray postres=new JSONArray();
+                    String code;
+                    for(int index=0;index<products.length();index++){
+                        JSONObject postreActual = products.getJSONObject(index);
+                        code=postreActual.getJSONObject("id").getString("reposteriaNit")+"/"+postreActual.getJSONObject("id").getString("code");
+                        obj =new URL("https://projectpostresya.herokuapp.com/postres/"+code+"/picture");
+
+                        HttpsURLConnection conimage = (HttpsURLConnection) obj.openConnection();
+                        conimage.setRequestMethod("GET");
+                        conimage.setRequestProperty("Content-Type", "application/json");
+                        conimage.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+                        conimage.setRequestProperty("Authorization", basicAuth);
+                        int res = con.getResponseCode();
+                        imagePostre=BitmapFactory.decodeStream(conimage.getInputStream());
+                        postreActual.put("image",imagePostre);
+                        postres.put(postreActual);
+
+                    }
+
+                    respuesta=postres;
+                    //respuesta=products;
                 }
 
 
@@ -335,15 +365,15 @@ public class VerReposterias extends AppCompatActivity
              TextView userName = (TextView) findViewById(R.id.userName);
 
             userName.setText(SingletonUser.getInstance().getUser());
-            TextView h = (TextView) findViewById(R.id.prueba);
+
 
             if (jsonArray == null) {
-                h.setText("adasd");
+
             } else {
                 //  h.setText(jsonArray.toString());
                 try {
                     if(cual.equals("reposterias")){
-                        h.setText(latitud+"  sdfd "+longitud);
+
                         addData(jsonArray);
                     }else{
                         addDataPostres(jsonArray);
@@ -423,7 +453,7 @@ public class VerReposterias extends AppCompatActivity
             TextView id = new TextView(contextReposterias);
             id.setId(200 + i);
             id.setText("" + product.get("nit"));
-            //id.setPadding(2, 0, 5, 0);
+            id.setPadding(0, 0, 0, 0);
             id.setTextColor(Color.WHITE);
             tr.addView(id);
 
@@ -431,6 +461,7 @@ public class VerReposterias extends AppCompatActivity
             TextView name = new TextView(contextReposterias);
             name.setId(200 + i);
             name.setText(product.get("name") + "");
+            name.setPadding(2, 0, 5, 0);
             //name.setPadding(2, 0, 5, 0);
             name.setTextColor(Color.WHITE);
             tr.addView(name);
@@ -438,6 +469,7 @@ public class VerReposterias extends AppCompatActivity
             TextView direccion = new TextView(contextReposterias);
             direccion.setId(200 + i);
             direccion.setText(product.get("direccion") + "");
+            direccion.setPadding(2, 0, 5, 0);
             //price.setPadding(2, 0, 5, 0);
             direccion.setTextColor(Color.WHITE);
             tr.addView(direccion);
@@ -482,13 +514,13 @@ public class VerReposterias extends AppCompatActivity
                 Toolbar.LayoutParams.WRAP_CONTENT));
 
 
-      /*  TextView label_nit = new TextView(contextReposterias);
-        label_nit.setId(20);
-        label_nit.setText("id");
-        label_nit.setTextColor(Color.WHITE);
-        label_nit.setPadding(15, 15, 15, 15);
-        tr_head.addView(label_nit);// add the column to the table row here
-*/
+        TextView label_image = new TextView(contextReposterias);
+        label_image.setId(20);
+        label_image.setText("imagen");
+        label_image.setTextColor(Color.WHITE);
+        label_image.setPadding(15, 15, 15, 15);
+        tr_head.addView(label_image);// add the column to the table row here
+
 
 
 
@@ -536,6 +568,15 @@ public class VerReposterias extends AppCompatActivity
             id.setTextColor(Color.WHITE);
             tr.addView(id);
 */
+
+            ImageView image=new ImageView(contextReposterias);
+            image.setId(200+i);
+            //imagePostre= BitmapFactory.decodeStream((InputStream) product.get("image"));
+            image.setImageBitmap((Bitmap) product.get("image"));
+            image.setPadding(0,2,4,2);
+
+            image.setLayoutParams(new TableRow.LayoutParams(130,130));
+            tr.addView(image);
 
             TextView name = new TextView(contextReposterias);
             name.setId(200 + i);
