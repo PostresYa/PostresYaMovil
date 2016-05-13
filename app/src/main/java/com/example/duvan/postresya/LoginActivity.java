@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -385,7 +386,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         SingletonUser.getInstance().setUser(mEmail);
                         SingletonUser.getInstance().setPassword(mPassword);
                         Intent i= new Intent(contextLogin,VerReposterias.class);
-
                         startActivity(i);
                     }else {
                         AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextLogin);

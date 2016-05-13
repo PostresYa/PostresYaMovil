@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -64,9 +65,10 @@ public class VerReposterias extends AppCompatActivity
     private boolean finding=false;
     private View viewReposterias;
     private  View viewProgress;
-
+    private String nameReposteria;
 
     private Bitmap imagePostre;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -336,6 +338,8 @@ public class VerReposterias extends AppCompatActivity
                         int res = con.getResponseCode();
                         imagePostre=BitmapFactory.decodeStream(conimage.getInputStream());
                         postreActual.put("image",imagePostre);
+                       // postreActual.put("inputImage",conimage.getInputStream().toString());
+                        postreActual.put("nombreReposteria",nameReposteria);
                         postres.put(postreActual);
 
                     }
@@ -487,6 +491,7 @@ public class VerReposterias extends AppCompatActivity
                     }*/
                     try {
                         showProgress(true);
+                        nameReposteria=product.getString("name");
                         AsyncTask tareaPostres= new MyTaskGetReposterias().execute(product.getString("nit"));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -542,9 +547,11 @@ public class VerReposterias extends AppCompatActivity
         tableproducts.addView(tr_head, new TableLayout.LayoutParams(
                 Toolbar.LayoutParams.FILL_PARENT,
                 Toolbar.LayoutParams.WRAP_CONTENT));
+        JSONObject product;
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject product = (JSONObject) jsonArray.get(i);
+            product = (JSONObject) jsonArray.get(i);
+            final JSONObject postre=product;
             TableRow tr = new TableRow(contextReposterias);
             //  if (i % 2 != 0) {
             //     tr.setBackgroundColor(Color.BLACK);
@@ -592,6 +599,32 @@ public class VerReposterias extends AppCompatActivity
             price.setTextColor(Color.WHITE);
             tr.addView(price);
 
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TextView h = (TextView) findViewById(R.id.prueba);
+                    /*TextView ms= (TextView) findViewById(view.getId());
+
+                    try {
+                        h.setText(product.getString("nit"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+
+                    //showProgress(true);
+                    //AsyncTask tareaPostres= new MyTaskGetReposterias().execute(product.getString("nit"));
+                    try {
+                        SingletonUser.getInstance().setImagePostreActual((Bitmap) postre.get("image"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent=new Intent(contextReposterias,PostreCantidadActivity.class);
+                    intent.putExtra("postre", postre.toString());
+
+                    startActivity(intent);
+
+                }
+            });
 
 
             tableproducts.addView(tr, new TableLayout.LayoutParams(
