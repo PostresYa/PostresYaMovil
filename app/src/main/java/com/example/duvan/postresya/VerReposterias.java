@@ -81,17 +81,10 @@ public class VerReposterias extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextReposterias);
-                alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                Intent i= new Intent(contextReposterias,PedidoActivity.class);
 
-                    }
-                });
-                AlertDialog alertDialog= alertBuilder.create();
-                alertDialog.setTitle("En mantenimiento!");
-                alertDialog.setMessage("estamos trabajando");
-                alertDialog.show();
+                i.putExtra("cual","ver");
+                startActivity(i);
             }
         });
         viewReposterias=findViewById(R.id.scrollViewReposterias);

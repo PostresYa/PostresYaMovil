@@ -1,5 +1,6 @@
 package com.example.duvan.postresya;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -31,6 +32,8 @@ public class PostreCantidadActivity extends AppCompatActivity {
     private TextView descripcionPostre;
     private TextView precioPostre;
     private ImageView imagenPostre;
+    private TextView cantidadPostre;
+    private Context contextPostreCantidad=this;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -48,8 +51,10 @@ public class PostreCantidadActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i= new Intent(contextPostreCantidad,PedidoActivity.class);
+
+                i.putExtra("cual","ver");
+                startActivity(i);
             }
         });
 
@@ -70,10 +75,12 @@ public class PostreCantidadActivity extends AppCompatActivity {
             descripcionPostre = (TextView) findViewById(R.id.descripcionPostre);
             precioPostre = (TextView) findViewById(R.id.precioPostre);
             imagenPostre = (ImageView) findViewById(R.id.imagenPostre);
+            cantidadPostre=(TextView) findViewById(R.id.cantidadPedido);
             nombreReposteria.setText(postre.getString("nombreReposteria"));
             nombrePostre.setText(postre.getString("name"));
             descripcionPostre.setText(postre.getString("description"));
             precioPostre.setText(postre.getString("price"));
+            cantidadPostre.setText("1");
             //Bitmap algo= new Bitmap(postre.get("image"));
             imagenPostre.setImageBitmap(SingletonUser.getInstance().getImagePostreActual());
 
@@ -81,8 +88,21 @@ public class PostreCantidadActivity extends AppCompatActivity {
 
 
 
+
+
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void AddCantidad(View v){
+        cantidadPostre.setText((Integer.parseInt(""+cantidadPostre.getText())+1)+"");
+    }
+
+    public void LessCantidad(View v){
+        int cantidad=Integer.parseInt(""+cantidadPostre.getText());
+        if(cantidad>1){
+            cantidadPostre.setText((cantidad-1)+"");
         }
     }
 
@@ -125,4 +145,18 @@ public class PostreCantidadActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
+    public void AgregarCarrito(View v) throws JSONException {
+
+        JSONObject postreCantidad= new JSONObject();
+        postreCantidad.put("postre",postre);
+        postreCantidad.put("cantidad",cantidadPostre.getText());
+        Intent i= new Intent(this,PedidoActivity.class);
+        i.putExtra("postreCantidad",postreCantidad.toString());
+        i.putExtra("cual","agregar");
+        startActivity(i);
+
+
+    }
+
 }

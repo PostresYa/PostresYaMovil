@@ -67,9 +67,54 @@
         android:layout_height="wrap_content"
         android:text="Agregar"
         android:id="@+id/agregarPostre"
-        android:layout_marginTop="44dp"
+        android:onClick="AgregarCarrito"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/cantidadPedido"
+        android:layout_alignLeft="@+id/cantidadPedido"
+        android:layout_alignStart="@+id/cantidadPedido" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:id="@+id/cantidadPedido"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/precioPostre"
         android:layout_alignLeft="@+id/precioPostre"
-        android:layout_alignStart="@+id/precioPostre" />
+        android:layout_alignStart="@+id/precioPostre"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/masCantidad"
+        android:src="@drawable/ic_exposure_plus_1_black_24dp"
+        android:onClick="AddCantidad"
+        android:layout_alignTop="@+id/cantidadPedido"
+        android:layout_above="@+id/agregarPostre"
+        android:layout_alignRight="@+id/precioPostre"
+        android:layout_alignEnd="@+id/precioPostre" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/menosCantidad"
+        android:onClick="LessCantidad"
+        android:src="@drawable/ic_exposure_neg_1_black_24dp"
+        android:layout_alignTop="@+id/cantidadPedido"
+        android:layout_above="@+id/agregarPostre"
+        android:layout_toRightOf="@+id/nombreReposteria"
+        android:layout_toLeftOf="@+id/cantidadPedido"
+        android:layout_toStartOf="@+id/cantidadPedido" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cantidad:"
+        android:id="@+id/textView"
+        android:layout_above="@+id/agregarPostre"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
