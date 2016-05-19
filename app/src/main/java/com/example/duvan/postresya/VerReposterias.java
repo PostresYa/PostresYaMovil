@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -111,7 +114,7 @@ public class VerReposterias extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+/*        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -119,7 +122,7 @@ public class VerReposterias extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
+  */  }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,6 +228,7 @@ public class VerReposterias extends AppCompatActivity
         latitud= location.getLatitude();
         longitud= location.getLongitude();
         finding=true;
+        setLocation(location);
     }
 
     @Override
@@ -236,6 +240,26 @@ public class VerReposterias extends AppCompatActivity
     public void onProviderEnabled(String provider) {
 
     }
+
+
+    public void setLocation(Location loc) {
+        //Obtener la direcci—n de la calle a partir de la latitud y la longitud
+        if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> list = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                if (!list.isEmpty()) {
+                    Address address = list.get(0);
+                    System.out.println(address);
+                    SingletonPedido.getInstance().setDireccion(address.getAddressLine(0));
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @Override
     public void onProviderDisabled(String provider) {

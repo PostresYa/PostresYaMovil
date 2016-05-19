@@ -1,6 +1,7 @@
 package com.example.duvan.postresya;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -12,6 +13,9 @@ public class SingletonPedido {
 
 
     private static  SingletonPedido instance=null;
+
+    private String direccion;
+
 
 
     private HashMap<String,JSONArray> pedido= new HashMap<>();
@@ -39,5 +43,34 @@ public class SingletonPedido {
     public HashMap<String,JSONArray> getPedido(){
         return pedido;
     }
+
+    public void removePostre(String nit,JSONObject postre) throws JSONException {
+        int pos=-1;
+        for(int i=0;i< pedido.get(nit).length();i++){
+            if(pedido.get(nit).get(i).equals(postre)){
+                pos=i;
+            }
+
+        }
+
+        if((pedido.get(nit).length()==1 && pos==0)|| pedido.get(nit).length()==0){
+            pedido.remove(nit);
+
+        }else{
+            pedido.get(nit).remove(pos);
+        }
+
+    }
+
+
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
 
 }

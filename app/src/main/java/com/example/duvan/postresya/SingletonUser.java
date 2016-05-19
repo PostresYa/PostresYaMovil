@@ -12,7 +12,6 @@ public class SingletonUser {
     private String password;
 
 
-
     private Bitmap imagePostreActual;
 
     public SingletonUser(){
