@@ -50,5 +50,10 @@ public class SingletonUser {
         this.imagePostreActual = imagePostreActual;
     }
 
+    public void removeAll(){
+        user="";
+        password="";
+
+    }
 
 }

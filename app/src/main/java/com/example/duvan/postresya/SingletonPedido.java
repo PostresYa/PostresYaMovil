@@ -74,7 +74,9 @@ public class SingletonPedido {
         pedido.remove(nit);
     }
 
-
+    public void removeAll(){
+        pedido=new HashMap<>();
+    }
 
     public String getDireccion() {
         return direccion;

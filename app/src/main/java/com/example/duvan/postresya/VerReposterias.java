@@ -188,6 +188,8 @@ public class VerReposterias extends AppCompatActivity
         }
 
         else if (id == R.id.Logout) {
+            SingletonPedido.getInstance().removeAll();
+            SingletonUser.getInstance().removeAll();
             Intent i=new Intent(contextReposterias,LoginActivity.class);
             startActivity(i);
         }

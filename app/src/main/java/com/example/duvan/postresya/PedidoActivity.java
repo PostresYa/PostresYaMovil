@@ -365,17 +365,19 @@ public class PedidoActivity extends AppCompatActivity {
                             for(int index=0;index<todasReposterias.length();index++){
                                 try {
 
-                                    correcto= valoresValidos((JSONObject) todasReposterias.getJSONArray(index).get(0));
+                                    correcto= correcto && valoresValidos((JSONObject) todasReposterias.getJSONArray(index).get(0));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
                             if(correcto){
                                 codigosConfirmacion="";
-                                todosEnviar=true;
+
                                 for(int index=0;index<todasReposterias.length();index++){
                                     if(index==todasReposterias.length()-1){
                                         todosEnviar=false;
+                                    }else{
+                                        todosEnviar=true;
                                     }
                                     try {
                                         showProgress(true);
