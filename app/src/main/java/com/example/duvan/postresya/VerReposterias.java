@@ -442,25 +442,20 @@ public class VerReposterias extends AppCompatActivity
                 Toolbar.LayoutParams.WRAP_CONTENT));
 
 
-        TextView label_nit = new TextView(contextReposterias);
-        label_nit.setId(20);
-        label_nit.setText("id");
-        label_nit.setTextColor(Color.WHITE);
-        label_nit.setPadding(15, 15, 15, 15);
-        tr_head.addView(label_nit);// add the column to the table row here
+
 
         TextView label_name = new TextView(contextReposterias);
         label_name.setId(21);// define id that must be unique
         label_name.setText("name"); // set the text for the header
         label_name.setTextColor(Color.WHITE); // set the color
-        label_name.setPadding(15, 15, 15, 15); // set the padding (if required)
+        label_name.setPadding(30, 30, 30, 30); // set the padding (if required)
         tr_head.addView(label_name); // add the column to the table row here
 
         TextView label_direccion = new TextView(contextReposterias);
         label_direccion.setId(21);// define id that must be unique
-        label_direccion.setText("price"); // set the text for the header
+        label_direccion.setText("direccion"); // set the text for the header
         label_direccion.setTextColor(Color.WHITE); // set the color
-        label_direccion.setPadding(15, 15, 15, 15); // set the padding (if required)
+        label_direccion.setPadding(30, 30, 30, 30); // set the padding (if required)
         tr_head.addView(label_direccion); // add the column to the table row here
 
 
@@ -487,12 +482,6 @@ public class VerReposterias extends AppCompatActivity
 
 //Create two columns to add as table data
             // Create a TextView to add date
-            TextView id = new TextView(contextReposterias);
-            id.setId(200 + i);
-            id.setText("" + product.get("nit"));
-            id.setPadding(0, 0, 0, 0);
-            id.setTextColor(Color.WHITE);
-            tr.addView(id);
 
 
             TextView name = new TextView(contextReposterias);

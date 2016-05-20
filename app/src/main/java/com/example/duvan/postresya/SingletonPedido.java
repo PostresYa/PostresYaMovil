@@ -70,6 +70,9 @@ public class SingletonPedido {
         }
 
     }
+    public void removeReposteriaPedido(String nit){
+        pedido.remove(nit);
+    }
 
 
 

@@ -49,6 +49,8 @@ public class PedidoActivity extends AppCompatActivity {
     private Context contextPedido=this;
     private View viewPedidos;
     private View progressPedidos;
+    private boolean todosEnviar=false;
+    private String codigosConfirmacion;
 
 
     @Override
@@ -91,7 +93,7 @@ public class PedidoActivity extends AppCompatActivity {
 
         listaPedidos.removeAllViews();
 
-
+        final JSONArray todasReposterias=new JSONArray();
 
         int total=0;
         for (Map.Entry entry : pedido.getInstance().getPedido().entrySet()) {
@@ -145,7 +147,7 @@ public class PedidoActivity extends AppCompatActivity {
                 label_postre.setText(postreAtual.getString("name"));
 
                 label_postre.setTextColor(Color.BLACK);
-                label_postre.setPadding(30, 30, 30, 3);
+                label_postre.setPadding(7, 30, 30, 7);
 
                 tr.addView(label_postre);// add the column to the table row here
 
@@ -156,14 +158,14 @@ public class PedidoActivity extends AppCompatActivity {
                 label_valor.setText(((JSONObject) value.get(index)).getInt("cantidad")+"x $ "+valor+"");
 
                 label_valor.setTextColor(Color.BLACK);
-                label_valor.setPadding(3, 30, 30, 3);
+                label_valor.setPadding(7, 30, 30, 7);
                 tr.addView(label_valor);// add the column to the table row here
 
                 ImageView cancelar= new ImageView(this);
                 cancelar.setId(20);
                 int res_imagen = getResources().getIdentifier("ic_cancel_black_24dp", "drawable",getPackageName());
                 cancelar.setImageResource(res_imagen);
-                cancelar.setPadding(5, 30, 30, 30);
+                cancelar.setPadding(7, 30, 30, 7);
 
                 final ImageView cakesad= new ImageView(this);
                 cakesad.setImageResource(R.drawable.cakesad);
@@ -238,19 +240,22 @@ public class PedidoActivity extends AppCompatActivity {
             label_total.setText("Total "+((JSONObject)((JSONObject)value.get(0)).get("postre")).getString("nombreReposteria")+": $"+totalReposteria);
 
             label_total.setTextColor(Color.BLACK);
-            label_total.setPadding(30, 30, 30, 30);
+            label_total.setPadding(7, 30, 30, 7);
             tr.addView(label_total);// add the column to the table row here
 
             ImageView enviar= new ImageView(this);
             enviar.setId(20);
             int res_imagen = getResources().getIdentifier("ic_send_black_24dp", "drawable",getPackageName());
             enviar.setImageResource(res_imagen);
-            enviar.setPadding(30, 30, 30, 30);
-            JSONObject totalPed=new JSONObject();
+            enviar.setPadding(7, 30, 30, 7);
+            final JSONObject totalPed=new JSONObject();
             totalPed.put("total",totalReposteria);
+
             final JSONArray pedidoReposteriaActual=new JSONArray();
+
             pedidoReposteriaActual.put(totalPed);
             pedidoReposteriaActual.put(value);
+            todasReposterias.put(pedidoReposteriaActual);
             tr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -268,7 +273,26 @@ public class PedidoActivity extends AppCompatActivity {
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogo1, int id) {
-                           AsyncTask task=new PedidoTask(SingletonUser.getInstance().getUser(),SingletonUser.getInstance().getPassword()).execute(pedidoReposteriaActual);
+                            if(valoresValidos(totalPed)){
+                                showProgress(true);
+                                codigosConfirmacion="";
+                                todosEnviar=false;
+                                AsyncTask task=new PedidoTask(SingletonUser.getInstance().getUser(),SingletonUser.getInstance().getPassword()).execute(pedidoReposteriaActual);
+
+                            }else{
+                                AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
+                                alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                AlertDialog alertDialog= alertBuilder.create();
+                                alertDialog.setTitle("error");
+                                alertDialog.setMessage("recuerda que la compra mínima es de 15000 pesos");
+                                alertDialog.show();
+
+                            }
 
                         }
                     });
@@ -310,14 +334,18 @@ public class PedidoActivity extends AppCompatActivity {
             label_total.setText("Total: $"+total);
 
             label_total.setTextColor(Color.BLACK);
-            label_total.setPadding(30, 30, 30, 30);
+            label_total.setPadding(7, 30, 30, 7);
             tr.addView(label_total);// add the column to the table row here
 
             ImageView enviarTodo= new ImageView(this);
             enviarTodo.setId(20);
             int res_imagen = getResources().getIdentifier("ic_send_black_24dp", "drawable",getPackageName());
             enviarTodo.setImageResource(res_imagen);
-            enviarTodo.setPadding(30, 30, 30, 30);
+            enviarTodo.setPadding(2, 30, 30, 2);
+
+            final JSONArray enviarTodas= todasReposterias;
+
+
             tr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -332,12 +360,45 @@ public class PedidoActivity extends AppCompatActivity {
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogo1, int id) {
-                          /*  try {
-                              //  pedido.getInstance().removePostre(llaveActual,postreEliminar);
-                               // llenarTabla();
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }*/
+
+                            boolean correcto=true ;
+                            for(int index=0;index<todasReposterias.length();index++){
+                                try {
+
+                                    correcto= valoresValidos((JSONObject) todasReposterias.getJSONArray(index).get(0));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if(correcto){
+                                codigosConfirmacion="";
+                                todosEnviar=true;
+                                for(int index=0;index<todasReposterias.length();index++){
+                                    if(index==todasReposterias.length()-1){
+                                        todosEnviar=false;
+                                    }
+                                    try {
+                                        showProgress(true);
+                                        AsyncTask task=new PedidoTask(SingletonUser.getInstance().getUser(),SingletonUser.getInstance().getPassword()).execute(todasReposterias.getJSONArray(index));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            else{
+                                AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
+                                alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                AlertDialog alertDialog= alertBuilder.create();
+                                alertDialog.setTitle("error");
+                                alertDialog.setMessage("recuerda que la compra mínima por repostería es de 15000 pesos");
+                                alertDialog.show();
+
+                            }
 
                         }
                     });
@@ -370,13 +431,26 @@ public class PedidoActivity extends AppCompatActivity {
 
     }
 
+    public boolean valoresValidos(JSONObject valor){
+        boolean valorD=true;
+        try {
+            if(valor.getInt("total")<15000){
+                valorD=false;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return valorD;
+    }
 
 
 
-    public class PedidoTask extends AsyncTask<JSONArray, Void, Void> {
+
+    public class PedidoTask extends AsyncTask<JSONArray, Void, String> {
 
         private final String username;
         private final String password;
+        private String nit;
 
         PedidoTask(String username, String password) {
             this.username = username;
@@ -384,15 +458,17 @@ public class PedidoActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(JSONArray... params) {
+        protected String doInBackground(JSONArray... params) {
             // TODO: attempt authentication against a network service.
 
-
+            String confirmacion = null;
             String reqResponse = null;
             JSONObject cliente = null;
             JSONObject pedidoSend= new JSONObject();
             JSONArray postresCantidad= new JSONArray();
             try {
+
+
 
                 JSONArray actual= (JSONArray) params[0].get(1);
 
@@ -403,7 +479,6 @@ public class PedidoActivity extends AppCompatActivity {
                 final Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
                 Date date = cal.getTime();
-                System.out.println("fecha///////////////////////////////////////////////"+cal.getTimeInMillis()+"   ||||   "+cal.getTime());
 
                 pedidoSend.put("fecha",date.getTime());
                 JSONArray postres= new JSONArray();
@@ -417,6 +492,7 @@ public class PedidoActivity extends AppCompatActivity {
                     indexActual= ((JSONObject) actual.get(index)).getJSONObject("postre");
                     primaria.put("codigoPostre",indexActual.getJSONObject("id").getString("code"));
                     primaria.put("reposteriaNit",indexActual.getJSONObject("id").getString("reposteriaNit"));
+                    nit=primaria.getString("reposteriaNit");
 //                    primaria.put("idPedido",0);
 
                     postreInfo.put("id",indexActual.getJSONObject("id"));
@@ -484,6 +560,20 @@ public class PedidoActivity extends AppCompatActivity {
 //Código HTTP de respuesta
                 int restcode=conp.getResponseCode();
 
+
+                in = new BufferedReader(new InputStreamReader(conp.getInputStream()));
+
+                response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                reqResponse = ((HttpsURLConnection) conp).getResponseMessage();
+
+                JSONObject confirmacionJSON = new JSONObject(response.toString());
+                confirmacion=confirmacionJSON.getString("message");
+
+
                 System.out.println("-----------------------"+restcode+"---------------");
                 System.out.println(pedidoSend.toString());
 
@@ -501,13 +591,48 @@ public class PedidoActivity extends AppCompatActivity {
             // TODO: register the new account here.
             //return cliente;
 
-            return null;
+            return confirmacion;
         }
 
         @Override
-        protected void onPostExecute(Void success) {
-            showProgress(false);
+        protected void onPostExecute(String success) {
+            codigosConfirmacion=codigosConfirmacion+" | "+success;
+            if(todosEnviar) {
 
+            }else{
+                showProgress(false);
+                if(success==null || success.equals("505")){
+
+                    AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
+                    alertBuilder.setPositiveButton("error", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    AlertDialog alertDialog= alertBuilder.create();
+                    alertDialog.setTitle("pedido");
+                    alertDialog.setMessage("No se pudo agregar el pedido, por error de la cuenta del usuario");
+                    alertDialog.show();
+
+
+
+                }else{
+                    pedido.getInstance().removeReposteriaPedido(nit);
+                    AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
+                    alertBuilder.setPositiveButton("pedido confirmado", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    AlertDialog alertDialog= alertBuilder.create();
+                    alertDialog.setTitle("Código(s) de confirmación del pedido: "+codigosConfirmacion);
+                    alertDialog.show();
+
+                }
+
+            }
 
             /*
             if (success!=null) {

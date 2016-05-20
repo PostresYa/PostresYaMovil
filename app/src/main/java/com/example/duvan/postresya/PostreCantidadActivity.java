@@ -152,9 +152,9 @@ public class PostreCantidadActivity extends AppCompatActivity {
     public boolean existePostre(JSONObject postre){
         boolean respuesta=false;
         try {
-            System.out.println(postre.getJSONObject("postre").toString());
+            System.out.println(postre.getJSONObject("postre").getJSONObject("id").toString());
             if(SingletonPedido.getInstance().existReposteria(postre.getJSONObject("postre").getJSONObject("id").getString("reposteriaNit"))){
-                JSONArray existentes= SingletonPedido.getInstance().getPedido().get(postre.getJSONObject("id").getString("reposteriaNit"));
+                JSONArray existentes= SingletonPedido.getInstance().getPedido().get(postre.getJSONObject("postre").getJSONObject("id").getString("reposteriaNit"));
                 for(int index=0;index<existentes.length();index++){
                     JSONObject actualexistente= (JSONObject) existentes.get(index);
                     System.out.println(postre.getJSONObject("postre").getJSONObject("id").getString("code")+"    sdfsdf   "+ actualexistente.getJSONObject("postre").getJSONObject("id").getString("code"));
