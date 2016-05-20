@@ -139,7 +139,23 @@ public class VerReposterias extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_about) {
+            AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextReposterias);
+            alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            AlertDialog alertDialog= alertBuilder.create();
+            alertDialog.setTitle("Acerca de PostresYa");
+            alertDialog.setMessage("PostresYa es una idea de negocio, pensada para facilitar la vida" +
+                    " de las personas y brindarle un postre en el lugar y momento que quiera, es desarrollada por: \n" +
+                    " Duván Barrera \n Giovanny Sissa \n Diego Rodriguez \n Wilmer Cortez");
+            alertDialog.show();
+
+
+
             return true;
         }
 

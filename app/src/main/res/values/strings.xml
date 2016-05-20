@@ -18,7 +18,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_about">Acerca de PostresYa</string>
     <string name="userName"></string>
     <string name="title_activity_postre_cantidad">PostreCantidadActivity</string>
 </resources>

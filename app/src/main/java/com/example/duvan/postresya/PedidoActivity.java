@@ -32,8 +32,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -129,7 +132,7 @@ public class PedidoActivity extends AppCompatActivity {
 
                 tr.setId(10);
                 tr.setBackgroundColor(Color.WHITE);
-                tr.setPadding(30,30,30,30);
+                //tr.setPadding(30,30,30,30);
                 tr.setLayoutParams(new Toolbar.LayoutParams(
                         Toolbar.LayoutParams.FILL_PARENT,
                         Toolbar.LayoutParams.WRAP_CONTENT));
@@ -141,7 +144,8 @@ public class PedidoActivity extends AppCompatActivity {
                 label_postre.setText(postreAtual.getString("name"));
 
                 label_postre.setTextColor(Color.BLACK);
-               // label_postre.setPadding(30, 30, 30, 30);
+                label_postre.setPadding(30, 30, 30, 3);
+
                 tr.addView(label_postre);// add the column to the table row here
 
                 TextView label_valor = new TextView(this);
@@ -151,14 +155,14 @@ public class PedidoActivity extends AppCompatActivity {
                 label_valor.setText(((JSONObject) value.get(index)).getInt("cantidad")+"x $ "+valor+"");
 
                 label_valor.setTextColor(Color.BLACK);
-                label_valor.setPadding(5, 30, 30, 30);
+                label_valor.setPadding(3, 30, 30, 3);
                 tr.addView(label_valor);// add the column to the table row here
 
                 ImageView cancelar= new ImageView(this);
                 cancelar.setId(20);
                 int res_imagen = getResources().getIdentifier("ic_cancel_black_24dp", "drawable",getPackageName());
                 cancelar.setImageResource(res_imagen);
-                cancelar.setPadding(5, 5, 5, 5);
+                cancelar.setPadding(5, 30, 30, 30);
 
                 final ImageView cakesad= new ImageView(this);
                 cakesad.setImageResource(R.drawable.cakesad);
@@ -235,6 +239,52 @@ public class PedidoActivity extends AppCompatActivity {
             label_total.setTextColor(Color.BLACK);
             label_total.setPadding(30, 30, 30, 30);
             tr.addView(label_total);// add the column to the table row here
+
+            ImageView enviar= new ImageView(this);
+            enviar.setId(20);
+            int res_imagen = getResources().getIdentifier("ic_send_black_24dp", "drawable",getPackageName());
+            enviar.setImageResource(res_imagen);
+            enviar.setPadding(30, 30, 30, 30);
+            JSONObject totalPed=new JSONObject();
+            totalPed.put("total",totalReposteria);
+            final JSONArray pedidoReposteriaActual=new JSONArray();
+            pedidoReposteriaActual.put(totalPed);
+            pedidoReposteriaActual.put(value);
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(contextPedido);
+
+                   // dialogo1.setIcon(R.drawable.cakesad);
+
+                    dialogo1.setTitle("Confirmación");
+
+                    try {
+                        dialogo1.setMessage("¿ Desea confirmar el pedido unicamente para "+pedidoReposteriaActual.getJSONArray(1).getJSONObject(0).getJSONObject("postre").getString("nombreReposteria")+" ?");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+                           AsyncTask task=new PedidoTask(SingletonUser.getInstance().getUser(),SingletonUser.getInstance().getPassword()).execute(pedidoReposteriaActual);
+
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+
+                        }
+                    });
+
+
+
+                    dialogo1.show();
+
+                }
+            });
+            tr.addView(enviar);
+
             listaPedidos.addView(tr, new TableLayout.LayoutParams(
                     Toolbar.LayoutParams.FILL_PARENT,
                     Toolbar.LayoutParams.WRAP_CONTENT));
@@ -261,6 +311,52 @@ public class PedidoActivity extends AppCompatActivity {
             label_total.setTextColor(Color.BLACK);
             label_total.setPadding(30, 30, 30, 30);
             tr.addView(label_total);// add the column to the table row here
+
+            ImageView enviarTodo= new ImageView(this);
+            enviarTodo.setId(20);
+            int res_imagen = getResources().getIdentifier("ic_send_black_24dp", "drawable",getPackageName());
+            enviarTodo.setImageResource(res_imagen);
+            enviarTodo.setPadding(30, 30, 30, 30);
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(contextPedido);
+
+                    // dialogo1.setIcon(R.drawable.cakesad);
+
+                    dialogo1.setTitle("Confirmación");
+
+                    dialogo1.setMessage("¿ Desea confirmar la totalidad del pedido ?");
+
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+                          /*  try {
+                              //  pedido.getInstance().removePostre(llaveActual,postreEliminar);
+                               // llenarTabla();
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }*/
+
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+
+                        }
+                    });
+
+
+
+                    dialogo1.show();
+
+                }
+            });
+
+            tr.addView(enviarTodo);
+
+
+
             listaPedidos.addView(tr, new TableLayout.LayoutParams(
                     Toolbar.LayoutParams.FILL_PARENT,
                     Toolbar.LayoutParams.WRAP_CONTENT));
@@ -276,7 +372,7 @@ public class PedidoActivity extends AppCompatActivity {
 
 
 
-    public class PedidoTask extends AsyncTask<String, Void, JSONObject> {
+    public class PedidoTask extends AsyncTask<JSONArray, Void, Void> {
 
         private final String username;
         private final String password;
@@ -287,14 +383,57 @@ public class PedidoActivity extends AppCompatActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(String... params) {
+        protected Void doInBackground(JSONArray... params) {
             // TODO: attempt authentication against a network service.
 
 
             String reqResponse = null;
             JSONObject cliente = null;
+            JSONObject pedidoSend= new JSONObject();
+            JSONArray postresCantidad= new JSONArray();
+            try {
+
+                JSONArray actual= (JSONArray) params[0].get(1);
+
+                pedidoSend.put("direccion",SingletonPedido.getInstance().getDireccion());
+                pedidoSend.put("estado","en espera");
+                pedidoSend.put("precio",((JSONObject)params[0].get(0)).getInt("total"));
+                final Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                Date date = cal.getTime();
+                pedidoSend.put("fecha",date);
+                JSONArray postres= new JSONArray();
+
+
+                for(int index=0;index<actual.length();index++){
+                    JSONObject postreCant=new JSONObject();
+                    JSONObject postreInfo=new JSONObject();
+                    JSONObject primaria= new JSONObject();
+                    JSONObject indexActual= new JSONObject();
+                    indexActual= ((JSONObject) actual.get(index)).getJSONObject("postre");
+                    primaria.put("codigoPostre",indexActual.getJSONObject("id").getString("code"));
+                    primaria.put("reposteriaNit",indexActual.getJSONObject("id").getString("reposteriaNit"));
+
+                    postreInfo.put("id",indexActual.getJSONObject("id"));
+                    postreInfo.put("name",indexActual.getString("name"));
+                    postreInfo.put("price",indexActual.getInt("price"));
+                    postreInfo.put("description",indexActual.getString("description"));
+
+                    postreCant.put("postreCantId",primaria);
+                    postreCant.put("postre",postreInfo);
+                    postreCant.put("cant",actual.getJSONObject(index).getInt("cantidad"));
+                    postres.put(postreCant);
+                }
+                pedidoSend.put("postres",postres);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             try {
+
+
+
 
                 String userPass = username + ":" + password;
                 String basicAuth = "Basic " + new String(Base64.encodeToString(userPass.getBytes(), Base64.NO_WRAP));
@@ -316,6 +455,37 @@ public class PedidoActivity extends AppCompatActivity {
 
                 cliente = new JSONObject(response.toString());
 
+                pedidoSend.put("cliente",cliente);
+
+
+
+
+
+
+
+                obj = new URL("https://products-catalog-api.herokuapp.com/pedidos");
+                HttpsURLConnection conp = (HttpsURLConnection) obj.openConnection();
+                conp.setRequestMethod("POST");
+                conp.setRequestProperty("Content-Type","application/json");
+                conp.setRequestProperty("Authorization",basicAuth);
+                OutputStream out = conp.getOutputStream();
+
+                out.write(pedidoSend.toString().getBytes());
+
+                out.flush();
+                out.close();
+
+//Mensaje de respuesta
+                reqResponse = ((HttpsURLConnection)con).getResponseMessage();
+//Código HTTP de respuesta
+                int restcode=con.getResponseCode();
+
+                System.out.println("-----------------------"+restcode+"---------------");
+
+
+
+
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -325,11 +495,13 @@ public class PedidoActivity extends AppCompatActivity {
             }
 
             // TODO: register the new account here.
-            return cliente;
+            //return cliente;
+
+            return null;
         }
 
         @Override
-        protected void onPostExecute(JSONObject success) {
+        protected void onPostExecute(Void success) {
             showProgress(false);
 
 

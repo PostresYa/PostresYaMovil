@@ -20,6 +20,7 @@ public class SingletonPedido {
 
     private HashMap<String,JSONArray> pedido= new HashMap<>();
 
+
     public SingletonPedido(){
 
     }
