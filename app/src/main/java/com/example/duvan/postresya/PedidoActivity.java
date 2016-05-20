@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -398,11 +399,13 @@ public class PedidoActivity extends AppCompatActivity {
                 pedidoSend.put("direccion",SingletonPedido.getInstance().getDireccion());
                 pedidoSend.put("estado","en espera");
                 pedidoSend.put("precio",((JSONObject)params[0].get(0)).getInt("total"));
+
                 final Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
                 Date date = cal.getTime();
-                System.out.println("fecha///////////////////////////////////////////////"+cal.getTimeInMillis());
-                pedidoSend.put("fecha",cal.getTimeInMillis());
+                System.out.println("fecha///////////////////////////////////////////////"+cal.getTimeInMillis()+"   ||||   "+cal.getTime());
+
+                pedidoSend.put("fecha",date.getTime());
                 JSONArray postres= new JSONArray();
 
 
@@ -461,7 +464,6 @@ public class PedidoActivity extends AppCompatActivity {
 
 
 
-                System.out.println("|||||||||||||||||||||||||||"+pedidoSend.toString());
 
 
 
@@ -483,7 +485,7 @@ public class PedidoActivity extends AppCompatActivity {
                 int restcode=conp.getResponseCode();
 
                 System.out.println("-----------------------"+restcode+"---------------");
-
+                System.out.println(pedidoSend.toString());
 
 
 

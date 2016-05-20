@@ -41,6 +41,14 @@ public class SingletonPedido {
             pedido.get(nit).put(postre);
         }
     }
+
+    public boolean existReposteria(String nit){
+        boolean respuesta=true;
+        if(pedido.get(nit)==null){
+            respuesta=false;
+        }
+        return respuesta;
+    }
     public HashMap<String,JSONArray> getPedido(){
         return pedido;
     }

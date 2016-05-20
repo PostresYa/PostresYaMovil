@@ -1,6 +1,7 @@
 package com.example.duvan.postresya;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -146,15 +149,60 @@ public class PostreCantidadActivity extends AppCompatActivity {
         client.disconnect();
     }
 
+    public boolean existePostre(JSONObject postre){
+        boolean respuesta=false;
+        try {
+            System.out.println(postre.getJSONObject("postre").toString());
+            if(SingletonPedido.getInstance().existReposteria(postre.getJSONObject("postre").getJSONObject("id").getString("reposteriaNit"))){
+                JSONArray existentes= SingletonPedido.getInstance().getPedido().get(postre.getJSONObject("id").getString("reposteriaNit"));
+                for(int index=0;index<existentes.length();index++){
+                    JSONObject actualexistente= (JSONObject) existentes.get(index);
+                    System.out.println(postre.getJSONObject("postre").getJSONObject("id").getString("code")+"    sdfsdf   "+ actualexistente.getJSONObject("postre").getJSONObject("id").getString("code"));
+                    if(postre.getJSONObject("postre").getJSONObject("id").getString("code").equals(actualexistente.getJSONObject("postre").getJSONObject("id").getString("code"))){
+                        respuesta=true;
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return respuesta;
+    }
     public void AgregarCarrito(View v) throws JSONException {
 
+
+
         JSONObject postreCantidad= new JSONObject();
+
         postreCantidad.put("postre",postre);
         postreCantidad.put("cantidad",cantidadPostre.getText());
-        Intent i= new Intent(this,PedidoActivity.class);
-        i.putExtra("postreCantidad",postreCantidad.toString());
-        i.putExtra("cual","agregar");
-        startActivity(i);
+
+        if(existePostre(postreCantidad)){
+
+            AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPostreCantidad);
+            alertBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            AlertDialog alertDialog= alertBuilder.create();
+            alertDialog.setTitle("Postre repetido");
+            alertDialog.setMessage("el postre que desea solicitar, ya se encuentra en el carrito");
+            alertDialog.show();
+
+
+        }else{
+            Intent i= new Intent(this,PedidoActivity.class);
+            i.putExtra("postreCantidad",postreCantidad.toString());
+            i.putExtra("cual","agregar");
+            System.out.println("postre cantidad"+postreCantidad.toString());
+            startActivity(i);
+        }
+
+
+
 
 
     }
