@@ -597,6 +597,9 @@ public class PedidoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String success) {
             codigosConfirmacion=codigosConfirmacion+" | "+success;
+            if(success!=null && !success.equals("505")){
+                pedido.getInstance().removeReposteriaPedido(nit);
+            }
             if(todosEnviar) {
 
             }else{
@@ -614,11 +617,15 @@ public class PedidoActivity extends AppCompatActivity {
                     alertDialog.setTitle("pedido");
                     alertDialog.setMessage("No se pudo agregar el pedido, por error de la cuenta del usuario");
                     alertDialog.show();
-
+                    try {
+                        llenarTabla();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
 
                 }else{
-                    pedido.getInstance().removeReposteriaPedido(nit);
+
                     AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
                     alertBuilder.setPositiveButton("pedido confirmado", new DialogInterface.OnClickListener() {
                         @Override
