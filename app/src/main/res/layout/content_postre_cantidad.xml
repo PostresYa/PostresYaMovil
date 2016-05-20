@@ -17,10 +17,10 @@
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:id="@+id/imagenPostre"
-        android:layout_above="@+id/nombrePostre"
-        android:layout_alignRight="@+id/agregarPostre"
-        android:layout_alignEnd="@+id/agregarPostre"
-        android:layout_marginBottom="37dp" />
+        android:layout_below="@+id/nombreReposteria"
+        android:layout_alignLeft="@+id/nombrePostre"
+        android:layout_alignStart="@+id/nombrePostre"
+        android:layout_marginTop="32dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,7 +60,68 @@
         android:layout_below="@+id/descripcionPostre"
         android:layout_alignLeft="@+id/descripcionPostre"
         android:layout_alignStart="@+id/descripcionPostre"
-        android:layout_marginTop="35dp" />
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="10dp" />
+
+
+
+
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/precioPostre"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cantidad:"
+            android:id="@+id/textView"
+            android:layout_alignTop="@+id/cantidadPedido"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginRight="10dp" />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menosCantidad"
+            android:onClick="LessCantidad"
+            android:src="@drawable/ic_exposure_neg_1_black_24dp"
+       />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:id="@+id/cantidadPedido"
+
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView4"
+            android:src="@drawable/ic_exposure_plus_1_black_24dp"
+            android:onClick="AddCantidad"
+            android:layout_alignTop="@+id/cantidadPedido"
+            android:layout_toRightOf="@+id/cantidadPedido"
+            android:layout_alignRight="@+id/precioPostre"
+            android:layout_alignEnd="@+id/precioPostre"
+            android:layout_above="@+id/agregarPostre"
+            android:baselineAlignBottom="false" />
+
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
@@ -68,57 +129,8 @@
         android:text="Agregar"
         android:id="@+id/agregarPostre"
         android:onClick="AgregarCarrito"
-        android:layout_marginTop="39dp"
-        android:layout_below="@+id/cantidadPedido"
-        android:layout_alignLeft="@+id/cantidadPedido"
-        android:layout_alignStart="@+id/cantidadPedido" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
-        android:id="@+id/cantidadPedido"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/precioPostre"
-        android:layout_alignLeft="@+id/precioPostre"
-        android:layout_alignStart="@+id/precioPostre"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/masCantidad"
-        android:src="@drawable/ic_exposure_plus_1_black_24dp"
-        android:onClick="AddCantidad"
-        android:layout_alignTop="@+id/cantidadPedido"
-        android:layout_above="@+id/agregarPostre"
-        android:layout_alignRight="@+id/precioPostre"
-        android:layout_alignEnd="@+id/precioPostre"
-        android:layout_toRightOf="@+id/cantidadPedido"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/menosCantidad"
-        android:onClick="LessCantidad"
-        android:src="@drawable/ic_exposure_neg_1_black_24dp"
-
-        android:layout_alignTop="@+id/cantidadPedido"
-
-
-        android:layout_alignBottom="@+id/textView"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toLeftOf="@+id/cantidadPedido"
-        android:layout_toStartOf="@+id/cantidadPedido" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cantidad:"
-        android:id="@+id/textView"
-        android:layout_alignTop="@+id/cantidadPedido"
+        android:layout_below="@+id/linearLayout"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp" />
 </RelativeLayout>
