@@ -1,4 +1,4 @@
-<img src="/app/src/main/res/drawable/logo.png" align="right" />
+<img src="/app/src/main/res/drawable/logoREADME.png" align="right" />
 ##Escuela Colombiana de Ingeniería
 ##Construcción de Software - COSW
 ## PostresYaMovil
