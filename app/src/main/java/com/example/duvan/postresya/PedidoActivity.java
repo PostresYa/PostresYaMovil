@@ -401,7 +401,8 @@ public class PedidoActivity extends AppCompatActivity {
                 final Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
                 Date date = cal.getTime();
-                pedidoSend.put("fecha",date);
+                System.out.println("fecha///////////////////////////////////////////////"+cal.getTimeInMillis());
+                pedidoSend.put("fecha",cal.getTimeInMillis());
                 JSONArray postres= new JSONArray();
 
 
@@ -413,6 +414,7 @@ public class PedidoActivity extends AppCompatActivity {
                     indexActual= ((JSONObject) actual.get(index)).getJSONObject("postre");
                     primaria.put("codigoPostre",indexActual.getJSONObject("id").getString("code"));
                     primaria.put("reposteriaNit",indexActual.getJSONObject("id").getString("reposteriaNit"));
+//                    primaria.put("idPedido",0);
 
                     postreInfo.put("id",indexActual.getJSONObject("id"));
                     postreInfo.put("name",indexActual.getString("name"));
@@ -459,11 +461,11 @@ public class PedidoActivity extends AppCompatActivity {
 
 
 
+                System.out.println("|||||||||||||||||||||||||||"+pedidoSend.toString());
 
 
 
-
-                obj = new URL("https://products-catalog-api.herokuapp.com/pedidos");
+                obj = new URL("https://projectpostresya.herokuapp.com/pedidos");
                 HttpsURLConnection conp = (HttpsURLConnection) obj.openConnection();
                 conp.setRequestMethod("POST");
                 conp.setRequestProperty("Content-Type","application/json");
@@ -476,9 +478,9 @@ public class PedidoActivity extends AppCompatActivity {
                 out.close();
 
 //Mensaje de respuesta
-                reqResponse = ((HttpsURLConnection)con).getResponseMessage();
+                reqResponse = ((HttpsURLConnection)conp).getResponseMessage();
 //Código HTTP de respuesta
-                int restcode=con.getResponseCode();
+                int restcode=conp.getResponseCode();
 
                 System.out.println("-----------------------"+restcode+"---------------");
 
