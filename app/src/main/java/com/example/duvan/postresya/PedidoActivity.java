@@ -605,6 +605,12 @@ public class PedidoActivity extends AppCompatActivity {
             if(todosEnviar) {
 
             }else{
+
+                try {
+                    llenarTabla();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 showProgress(false);
                 if(success==null || success.equals("505")){
 
@@ -619,15 +625,10 @@ public class PedidoActivity extends AppCompatActivity {
                     alertDialog.setTitle("pedido");
                     alertDialog.setMessage("No se pudo agregar el pedido, por error de la cuenta del usuario");
                     alertDialog.show();
-                    try {
-                        llenarTabla();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+
 
 
                 }else{
-
                     AlertDialog.Builder alertBuilder= new AlertDialog.Builder(contextPedido);
                     alertBuilder.setPositiveButton("pedido confirmado", new DialogInterface.OnClickListener() {
                         @Override
